@@ -4,15 +4,19 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
+# Move the Chrome Driver executable to the folder containing the script and this PATH will work correctly
 PATH="chromedriver.exe"
 
+# General options in order to control the behaviour of the web driver
 chrome_options = Options()
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--disable-extensions")
 chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images":2})
-driver = webdriver.Chrome(options=chrome_options, executable_path=PATH) # ChromeDriver.exe location on device
 
-# Locations of different categories
+# Create the driver alongside the PATH and options provided
+driver = webdriver.Chrome(options=chrome_options, executable_path=PATH) 
+
+# URL locations of different categories
 tesco_freshfoods = "/fresh-food/all"
 tesco_bakery = "/bakery/all"
 tesco_frozenfoods = "/frozen-food/all"
@@ -44,19 +48,29 @@ def selectChoice(i):
         3: tesco_frozenfoods,
         4: tesco_foodcupboard,
         5: tesco_drinks
-    }.get(i, tesco_freshfoods)
+    }.get(i, tesco_freshfoods) # if an invalid input is entered then the default value will just be the first option
 
+# Create filename based on website section
+def filenameChoice(x):
+    return {
+        1: "Fresh_Foods",
+        2: "Bakery_Foods",
+        3: "Frozen_Foods",
+        4: "Food_Cupboard",
+        5: "Drinks"
+    }.get(x, "Fresh_Foods")
+
+# String variable for containing the location of the groceries
 selectedChoice = selectChoice(choiceInput)
 
 # Lists that will be used for the data
 products=[]
 prices=[]
-#ratings=[]
 
 driver.get("https://www.tesco.com/groceries/en-GB/shop" + selectedChoice) # Website location for webscraping
 
-content = driver.page_source # The webpage
-soup = BeautifulSoup(content, features="html.parser") # Constructor for bs4
+content = driver.page_source # The content of the web page
+soup = BeautifulSoup(content, features="html.parser") # Constructor for Beautiful Soup
 
 # Store the Currency unit
 currency = soup.find('span', attrs={'class': 'currency'}).getText()
@@ -90,13 +104,6 @@ for x in range(max_pgno + 1):
             price=a.find_next('span', attrs={'class': 'value'}).getText()
             prices.append(float(price))
 
-
-#print(len(products))
-#print(len(prices))
-
-#print(products[10])
-#print(prices[10])
-
 # Zip products and prices lists together in order to sort the lists into a more sensible order
 zipped = zip(products, prices)
 sort_zipped = sorted(zipped)
@@ -105,7 +112,7 @@ sort_zipped = sorted(zipped)
 products, prices = zip(*sort_zipped)
 
 df = pd.DataFrame({'Product Name':products, 'Price':prices})
-df.to_csv('products.csv', index=False, encoding='utf-8')
+df.to_csv(filenameChoice(choiceInput)+'.csv', index=False, encoding='utf-8')
 
 driver.quit()
 
