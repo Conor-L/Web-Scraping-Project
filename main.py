@@ -1,8 +1,13 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import pandas as pd
 
-driver = webdriver.Chrome("C:/Users/lambe/Desktop/chromedriver.exe") # ChromeDriver.exe location on device
+chrome_options = Options()
+chrome_options.add_argument("--disable-gpu")
+chrome_options.add_argument("--disable-extensions")
+chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images":2})
+driver = webdriver.Chrome(chrome_options=chrome_options, executable_path="C:/Users/lambe/Desktop/chromedriver.exe") # ChromeDriver.exe location on device
 
 # Locations of different categories
 tesco_freshfoods = "/fresh-food/all"
