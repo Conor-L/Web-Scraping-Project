@@ -4,12 +4,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
+PATH="chromedriver.exe"
+
 chrome_options = Options()
-chrome_options.headless=True
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--disable-extensions")
 chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images":2})
-driver = webdriver.Chrome(options=chrome_options, executable_path="C:/Users/lambe/Desktop/chromedriver.exe") # ChromeDriver.exe location on device
+driver = webdriver.Chrome(options=chrome_options, executable_path=PATH) # ChromeDriver.exe location on device
 
 # Locations of different categories
 tesco_freshfoods = "/fresh-food/all"
@@ -66,7 +67,8 @@ for i in soup.find_all('a', attrs={'class': 'pagination--button'}):
     if i.find('span', attrs={'aria-hidden': 'true', 'class': None}) != None:
         pgno_list.append(int(i.getText()))
 
-max_pgno = max(pgno_list)
+max_pgno = 1
+#max(pgno_list)
 
 for x in range(max_pgno + 1):
 
@@ -96,6 +98,12 @@ for x in range(max_pgno + 1):
 #print(products[10])
 #print(prices[10])
 
+# Zip products and prices lists together in order to sort the lists into a more sensible order
+zipped = zip(products, prices)
+sort_zipped = sorted(zipped)
+
+# Run zip again with * to unzip the two lists back into their original variables
+products, prices = zip(*sort_zipped)
 
 df = pd.DataFrame({'Product Name':products, 'Price':prices})
 df.to_csv('products.csv', index=False, encoding='utf-8')
