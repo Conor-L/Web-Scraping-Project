@@ -2,12 +2,14 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import pandas as pd
+import time
 
 chrome_options = Options()
+chrome_options.headless=True
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--disable-extensions")
 chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images":2})
-driver = webdriver.Chrome(chrome_options=chrome_options, executable_path="C:/Users/lambe/Desktop/chromedriver.exe") # ChromeDriver.exe location on device
+driver = webdriver.Chrome(options=chrome_options, executable_path="C:/Users/lambe/Desktop/chromedriver.exe") # ChromeDriver.exe location on device
 
 # Locations of different categories
 tesco_freshfoods = "/fresh-food/all"
@@ -15,7 +17,6 @@ tesco_bakery = "/bakery/all"
 tesco_frozenfoods = "/frozen-food/all"
 tesco_foodcupboard = "/food-cupboard/all"
 tesco_drinks = "/drinks/all"
-
 
 # Simple terminal input to find which page the user wants to use
 
