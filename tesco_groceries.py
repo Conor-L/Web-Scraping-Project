@@ -67,8 +67,7 @@ for i in soup.find_all('a', attrs={'class': 'pagination--button'}):
     if i.find('span', attrs={'aria-hidden': 'true', 'class': None}) != None:
         pgno_list.append(int(i.getText()))
 
-max_pgno = 1
-#max(pgno_list)
+max_pgno = max(pgno_list)
 
 for x in range(max_pgno + 1):
 
