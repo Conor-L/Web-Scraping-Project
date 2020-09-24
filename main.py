@@ -8,6 +8,8 @@ driver = webdriver.Chrome("C:/Users/lambe/Desktop/chromedriver.exe") # ChromeDri
 tesco_freshfoods = "/fresh-food/all"
 tesco_bakery = "/bakery/all"
 tesco_frozenfoods = "/frozen-food/all"
+tesco_foodcupboard = "/food-cupboard/all"
+tesco_drinks = "/drinks/all"
 
 
 # Simple terminal input to find which page the user wants to use
@@ -19,6 +21,8 @@ print("""
         [1] Fresh Foods
         [2] Bakery Foods
         [3] Frozen Foods
+        [4] Food Cupboard
+        [5] Drinks
 
 
 """)
@@ -30,7 +34,9 @@ def selectChoice(i):
     return {
         1: tesco_freshfoods,
         2: tesco_bakery,
-        3: tesco_frozenfoods
+        3: tesco_frozenfoods,
+        4: tesco_foodcupboard,
+        5: tesco_drinks
     }.get(i, tesco_freshfoods)
 
 selectedChoice = selectChoice(choiceInput)
@@ -44,6 +50,9 @@ driver.get("https://www.tesco.com/groceries/en-GB/shop" + selectedChoice) # Webs
 
 content = driver.page_source # The webpage
 soup = BeautifulSoup(content, features="html.parser") # Constructor for bs4
+
+# Store the Currency unit
+currency = soup.find('span', attrs={'class': 'currency'}).getText()
 
 # Find out how many pages there are on this website URL
 pgno_list=[]
@@ -61,18 +70,18 @@ for x in range(max_pgno + 1):
     soup = BeautifulSoup(content, features="html.parser") # Constructor for bs4
 
     for a in soup.find_all('div', attrs={'class': 'product-tile-wrapper'}):
-        name=a.find('a', href=True, attrs={'class': 'sc-fznWqX dAkvW'}).string
+        name=a.find('a', href=True, attrs={'class': 'sc-fznWqX dAkvW'}).getText()
         products.append(name)
 
         availability_tag = a.find('div', attrs={'class': 'price-details--wrapper'})
 
         if (availability_tag == None):
-            price="[\'Not Available\']"
+            price="Not Available"
             prices.append(price)
     
         else:
-            price=a.find_next('span', attrs={'class': 'value'}).contents
-            prices.append(price)    
+            price=a.find_next('span', attrs={'class': 'value'}).getText()
+            prices.append(float(price))
 
 
 #print(len(products))
