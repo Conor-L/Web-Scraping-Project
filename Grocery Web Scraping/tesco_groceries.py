@@ -39,11 +39,20 @@ print("""
 
 """)
 
-choiceInput = int(input())
-
-while (re.search("[12345]{1}", str(choiceInput)) is None):
-	print("Please choose a valid option")
-	choiceInput = int(input())
+successfulInput = False
+while (successfulInput == False):
+	try:
+		choiceInput = int(input())
+		if not choiceInput:
+			raise ValueError('empty string')
+		else:
+			matchSingle = re.search("[12345]{1}", str(choiceInput))
+			matchMultiple = re.search("[12345]{2,}", str(choiceInput))
+			if (matchSingle is None or matchMultiple is not None):
+				raise ValueError('out of range')
+			else: successfulInput = True
+	except ValueError as e:
+		print("Please choose a valid option")
 
 # Create a dictionary as replacement for a switch/case statement
 def selectChoice(i):
