@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
+import re
 
 # Move the Chrome Driver executable to the folder containing the script and this PATH will work correctly
 PATH="chromedriver.exe"
@@ -39,6 +40,10 @@ print("""
 """)
 
 choiceInput = int(input())
+
+while (re.search("[12345]{1}", str(choiceInput)) is None):
+	print("Please choose a valid option")
+	choiceInput = int(input())
 
 # Create a dictionary as replacement for a switch/case statement
 def selectChoice(i):
